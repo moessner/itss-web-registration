@@ -1,0 +1,43 @@
+<div *ngIf="webcamMode">
+  <webcam (initError)="webcamInitFailure($event)" [trigger]="webcamTriggerObservable" (imageCapture)="handleImage($event)"></webcam>
+  <div>
+    <button mat-button class="margin-left-5 clickable" (click)="captureImage()"><i class="bi bi-camera-fill"></i> Take photo</button>
+    <button mat-button class="margin-left-5 clickable" (click)="webcamMode=false"><i class="bi bi-box-arrow-right"></i> Leave webcam mode</button>
+  </div>
+</div>
+
+<div *ngIf="!webcamMode">                
+    <div class="user-image">
+      <img [src]="webcamImage? webcamImage.imageAsDataUrl : '../../assets/img/person-square.svg'" (click)="webcamMode=true" class="clickable"/>
+    </div>
+    <div class="user-content">
+      <p>
+        <mat-form-field appearance="fill">
+          <input matInput placeholder="First name" [value]="user.firstName" required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <input matInput placeholder="Last name" [value]="user.lastName" required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <input matInput placeholder="Address" [value]="user.address" required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Role</mat-label>
+          <mat-select [value]="user.role">
+            <mat-option *ngFor="let role of roles" [value]="role">
+              {{role}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </p>
+      <button mat-button class="margin-left-5 clickable" (click)="createOrUpdateUser()"><i class="bi bi-check"></i> Confirm</button>
+      <button mat-button class="margin-left-5 clickable" (click)="webcamMode=true"><i class="bi bi-camera-fill"></i> Webcam</button>
+      <button mat-button class="margin-left-5 clickable" (click)="abort()"><i class="bi bi-x"></i> Abort</button>
+    </div>
+</div>
