@@ -15,7 +15,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
 import { MatSelectModule } from '@angular/material/select';
 import { WebcamModule } from 'ngx-webcam';
-
+import { HttpClientModule } from '@angular/common/http';  
 
 @NgModule({
   declarations: [
@@ -35,7 +35,8 @@ import { WebcamModule } from 'ngx-webcam';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    WebcamModule
+    WebcamModule,
+    HttpClientModule
   ],
   providers: [
   ],

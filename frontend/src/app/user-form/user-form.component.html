@@ -13,27 +13,42 @@
     <div class="user-content">
       <p>
         <mat-form-field appearance="fill">
-          <input matInput placeholder="First name" [value]="user.firstName" required>
+          <input #firstName matInput placeholder="First name" [value]="user.firstName" (change)='user.firstName=firstName.value' required>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field appearance="fill">
-          <input matInput placeholder="Last name" [value]="user.lastName" required>
+          <input #lastName matInput placeholder="Last name" [value]="user.lastName" (change)='user.lastName=lastName.value' required>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field appearance="fill">
-          <input matInput placeholder="Address" [value]="user.address" required>
+          <input #address matInput placeholder="Address" [value]="user.address" (change)='user.address=address.value' required>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field appearance="fill">
           <mat-label>Role</mat-label>
-          <mat-select [value]="user.role">
-            <mat-option *ngFor="let role of roles" [value]="role">
+          <mat-select #roleSelect [value]="user.role" (selectionChange)='user.role=roleSelect.value'>
+            <mat-option #role *ngFor="let role of roles" [value]="role">
               {{role}}
             </mat-option>
           </mat-select>
+        </mat-form-field>
+      </p>
+      <p *ngIf="roleSelect.value=='Administrator'">
+        <mat-form-field appearance="fill">
+          <input #username matInput placeholder="Username" required>
+        </mat-form-field>
+      </p>
+      <p *ngIf="roleSelect.value=='Administrator'">
+        <mat-form-field appearance="fill">
+          <input #password matInput type="password" placeholder="Password" required>
+        </mat-form-field>
+      </p>
+      <p *ngIf="roleSelect.value=='Administrator'">
+        <mat-form-field appearance="fill">
+          <input #passwordRepeat matInput type="password" placeholder="Repeat password" required>
         </mat-form-field>
       </p>
       <button mat-button class="margin-left-5 clickable" (click)="createOrUpdateUser()"><i class="bi bi-check"></i> Confirm</button>

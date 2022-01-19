@@ -1,4 +1,5 @@
 ﻿using backend.Models;
+using backend.Models.DBO;
 using backend.Persistence;
 using backend.Providers;
 using Microsoft.AspNetCore.Http;
@@ -30,61 +31,81 @@ namespace backend.Controllers
             {
                 Id = Guid.NewGuid(),
                 FirstName = userIn.FirstName,
-                LastName = userIn.LastName
+                LastName = userIn.LastName,
+                Address = userIn.Address,
+                Role = userIn.Role,
+                Image = new Image()
             };
 
             var res = await _userProvider.CreateUserAsync(user);
             return Ok(res);
         }
 
-        [HttpPost("Image")]
+        [HttpPost("Image/{userId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserOut))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Upload(Guid userId, IFormFile image)
         {
-            // todo: check for file format (e.g. if .jpg or .png, ...)
-            string extension = Path.GetExtension(image.FileName);
-
-            if (image != null && image.Length > 0)
+            try
             {
-                string imagePath = Path.Combine(".\\Images", Guid.NewGuid().ToString() + extension);
+                string extension = Path.GetExtension(image.FileName);
 
-                User dbUser = await _userProvider.GetUserAsync(userId);
-
-                if(System.IO.File.Exists(dbUser.ImagePath))
+                if (image != null && image.Length > 0)
                 {
-                    System.IO.File.Delete(dbUser.ImagePath);
+                    string imagePath = Path.Combine(".\\Images", Guid.NewGuid().ToString() + extension);
+
+                    User dbUser = await _userProvider.GetUserAsync(userId);
+
+                    if (System.IO.File.Exists(dbUser.Image?.Path))
+                    {
+                        System.IO.File.Delete(dbUser.Image.Path);
+                    }
+
+
+                    using (FileStream stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        image.CopyTo(stream);
+                    }
+
+                    dbUser.Image = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        Path = imagePath,
+                        Base64String = Convert.ToBase64String(System.IO.File.ReadAllBytes(imagePath))
+                    };
+
+                    await _userProvider.UpdateUserAsync(dbUser);
+
+                    return Ok(dbUser);
                 }
-
-                dbUser.ImagePath = imagePath;
-                await _userProvider.UpdateUserAsync(dbUser);
-
-                using (FileStream stream = new FileStream(imagePath, FileMode.Create))
+                else
                 {
-                    image.CopyTo(stream);
+                    return BadRequest("No image uploaded");
                 }
-
-                return Ok(dbUser);
             }
-            else
+            catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
+           
         }
 
-        [HttpGet("Image")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(File))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Download(Guid userId)
+        [HttpGet("Image/{userId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ImageOut))]
+        public async Task<IActionResult> GetImageBae64(Guid userId)
         {
             User dbUser = await _userProvider.GetUserAsync(userId);
 
-            if (!System.IO.File.Exists(dbUser.ImagePath))
+            if (dbUser == null)
+                return BadRequest($"User with id '{userId}' not found!");
+
+            if (!System.IO.File.Exists(dbUser.Image.Path))
             {
                 return BadRequest();
             }
 
-            return File(await System.IO.File.ReadAllBytesAsync(dbUser.ImagePath), "application/octet-stream", Path.GetFileName(dbUser.ImagePath));
+            return Ok(dbUser.Image);
         }
 
         [HttpPut("")]
