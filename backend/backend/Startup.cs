@@ -21,19 +21,27 @@ namespace backend
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(builder =>
+                builder
+                    .AddDebug()
+                    .AddConsole()
+                    .AddConfiguration(Configuration.GetSection("Logging"))
+                    .SetMinimumLevel(LogLevel.Information)
+            );
+
             services.AddDbContext<DatabaseContext>(options => options.UseMySql(
                 Configuration.GetConnectionString("MySQL_Database"),
-                new MySqlServerVersion(new Version(8, 0, 21)))
+                new MySqlServerVersion(new Version(8, 0, 0)))
                 .EnableDetailedErrors()
             );
 
@@ -54,7 +62,7 @@ namespace backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, DatabaseContext dbContext, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, DatabaseContext dbContext, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             dbContext?.Database.Migrate();
 
@@ -69,8 +77,7 @@ namespace backend
                     options.RoutePrefix = string.Empty;
                 });
 
-                // todo: change allowed origin for production
-                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                app.UseCors(options => options.SetIsOriginAllowed((host) => true).AllowAnyMethod().AllowAnyHeader());
             }
 
             app.UseHttpsRedirection();

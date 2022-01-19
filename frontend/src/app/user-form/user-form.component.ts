@@ -40,12 +40,18 @@ export class UserFormComponent {
 
       if(user) {
         this.userService.putUser(this.user).subscribe(user => {
+          if(!this.webcamImage){
+            return;
+          }
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
           });
         });
       }
       else {
         this.userService.postUser(this.user).subscribe(user => {
+          if(!this.webcamImage){
+            return;
+          }
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
           });
         });
@@ -57,8 +63,8 @@ export class UserFormComponent {
   }
 
   convertWebcamImageToFile(webcamImage: WebcamImage): File {
-    
-    const arr = this.webcamImage.imageAsDataUrl.split(",");
+
+    const arr = webcamImage.imageAsDataUrl.split(",");
 
     const bstr = atob(arr[1]);
     let n = bstr.length;
