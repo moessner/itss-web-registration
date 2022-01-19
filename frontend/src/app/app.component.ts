@@ -19,7 +19,7 @@ export class AppComponent {
   imageToShow: any;
 
  constructor(public dialog: MatDialog, private userService: UserService, 
-  private readonly sanitizer: DomSanitizer){ }
+  public readonly sanitizer: DomSanitizer){ }
 
   ngOnInit() {
     this.updateUsers();
@@ -34,7 +34,7 @@ export class AppComponent {
 
   openCreateUserDialog() {
     const dialogRef = this.dialog.open(UserFormComponent);
-    dialogRef.componentInstance.user = new User('', '', '', '', '', '', true);
+    dialogRef.componentInstance.user = new User('', '', '', '', '', true);
     dialogRef.afterClosed().subscribe(() => {
       this.updateUsers();
     })
@@ -59,13 +59,6 @@ export class AppComponent {
   updateUsers() {
     this.userService.getUsers().subscribe(r => {
       this.users = r;
-
-      this.users.forEach(user => {
-        this.userService.getBase64Image(user).subscribe(r => {
-          console.log(r);
-        });
-      })
-
       this.visible_users = this.users;
     });
   }

@@ -1,5 +1,4 @@
 ﻿using backend.Models;
-using backend.Models.DBO;
 using backend.Persistence;
 using backend.Providers;
 using Microsoft.AspNetCore.Http;
@@ -33,12 +32,16 @@ namespace backend.Controllers
                 FirstName = userIn.FirstName,
                 LastName = userIn.LastName,
                 Address = userIn.Address,
-                Role = userIn.Role,
-                Image = new Image()
             };
 
-            var res = await _userProvider.CreateUserAsync(user);
-            return Ok(res);
+            User dbUser = await _userProvider.CreateUserAsync(user);
+            return Ok(new UserOut { 
+                Id = dbUser.Id,
+                Address = dbUser.Address,
+                Base64Image = dbUser.Base64Image,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName
+            });
         }
 
         [HttpPost("Image/{userId:guid}")]
@@ -56,9 +59,9 @@ namespace backend.Controllers
 
                     User dbUser = await _userProvider.GetUserAsync(userId);
 
-                    if (System.IO.File.Exists(dbUser.Image?.Path))
+                    if (System.IO.File.Exists(dbUser.ImagePath))
                     {
-                        System.IO.File.Delete(dbUser.Image.Path);
+                        System.IO.File.Delete(dbUser.ImagePath);
                     }
 
 
@@ -67,16 +70,18 @@ namespace backend.Controllers
                         image.CopyTo(stream);
                     }
 
-                    dbUser.Image = new()
-                    {
-                        Id = Guid.NewGuid(),
-                        Path = imagePath,
-                        Base64String = Convert.ToBase64String(System.IO.File.ReadAllBytes(imagePath))
-                    };
-
+                    dbUser.ImagePath = imagePath;
+                    dbUser.Base64Image = $"data:image/{extension};base64," + Convert.ToBase64String(System.IO.File.ReadAllBytes(imagePath));
                     await _userProvider.UpdateUserAsync(dbUser);
 
-                    return Ok(dbUser);
+                    return Ok(new UserOut
+                    {
+                        Id = dbUser.Id,
+                        Address = dbUser.Address,
+                        Base64Image = dbUser.Base64Image,
+                        FirstName = dbUser.FirstName,
+                        LastName = dbUser.LastName
+                    });
                 }
                 else
                 {
@@ -92,20 +97,15 @@ namespace backend.Controllers
 
         [HttpGet("Image/{userId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ImageOut))]
-        public async Task<IActionResult> GetImageBae64(Guid userId)
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public async Task<IActionResult> GetImageBase64(Guid userId)
         {
             User dbUser = await _userProvider.GetUserAsync(userId);
 
             if (dbUser == null)
                 return BadRequest($"User with id '{userId}' not found!");
 
-            if (!System.IO.File.Exists(dbUser.Image.Path))
-            {
-                return BadRequest();
-            }
-
-            return Ok(dbUser.Image);
+            return Ok(dbUser.Base64Image);
         }
 
         [HttpPut("")]
@@ -113,8 +113,15 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update([FromBody] User user)
         {
-            var res = await _userProvider.UpdateUserAsync(user);
-            return Ok(res);
+            User dbUser = await _userProvider.UpdateUserAsync(user);
+            return Ok(new UserOut
+            {
+                Id = dbUser.Id,
+                Address = dbUser.Address,
+                Base64Image = dbUser.Base64Image,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName
+            });
         }
 
         [HttpGet("{userId:guid}")]
@@ -122,8 +129,15 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get(Guid userId)
         {
-            var res = await _userProvider.GetUserAsync(userId);
-            return Ok(res);
+            User dbUser = await _userProvider.GetUserAsync(userId);;
+            return Ok(new UserOut
+            {
+                Id = dbUser.Id,
+                Address = dbUser.Address,
+                Base64Image = dbUser.Base64Image,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName
+            });
         }
 
         [HttpDelete("{userId:guid}")]
@@ -131,8 +145,15 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(Guid userId)
         {
-            var res = await _userProvider.DeleteUserAsync(userId);
-            return Ok(res);
+            User dbUser = await _userProvider.DeleteUserAsync(userId);
+            return Ok(new UserOut
+            {
+                Id = dbUser.Id,
+                Address = dbUser.Address,
+                Base64Image = dbUser.Base64Image,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName
+            });
         }
 
         [HttpGet("")]
@@ -140,17 +161,39 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Get()
         {
-            var res = _userProvider.GetUsersAsync();
-            return Ok(res);
+            List<User> dbUsers = _userProvider.GetUsersAsync();
+            List<UserOut> usersOut = dbUsers.Select(x => new UserOut
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Base64Image = x.Base64Image,
+                FirstName = x.FirstName,
+                LastName = x.LastName
+            }).ToList();
+
+
+            return Ok(usersOut);
         }
 
         [HttpDelete("")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserOut>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete()
         {
             await _userProvider.DeleteUsersAsync();
-            return Ok();
+
+            List<User> dbUsers = _userProvider.GetUsersAsync();
+            List<UserOut> usersOut = dbUsers.Select(x => new UserOut
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Base64Image = x.Base64Image,
+                FirstName = x.FirstName,
+                LastName = x.LastName
+            }).ToList();
+
+
+            return Ok(usersOut);
         }
     }
 }

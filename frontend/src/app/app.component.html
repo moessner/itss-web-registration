@@ -13,14 +13,13 @@
 
     <mat-card class="user-card" *ngFor="let user of visible_users">
       <mat-card-header class="card-header clickable" (click)="user.isCollapsed=!user.isCollapsed">
-        <img *ngIf="!user.imageUrl" mat-card-avatar src="../assets/img/person-square.svg">
-        <img *ngIf="user.imageUrl"mat-card-avatar src={{user.imageUrl}}>
+        <img *ngIf="!user.base64Image" mat-card-avatar src="../assets/img/person-square.svg">
+        <img *ngIf="user.base64Image" mat-card-avatar [src]="sanitizer.bypassSecurityTrustUrl(user.base64Image)"/>
         <mat-card-title>{{user.firstName}} {{user.lastName}}</mat-card-title>
-        <mat-card-subtitle>{{user.role}}</mat-card-subtitle>
       </mat-card-header>
       <div *ngIf="!user.isCollapsed" class="card-content">
-        <img *ngIf="!user.imageUrl" mat-card-image class="user-image" src="../assets/img/person-square.svg">
-        <img *ngIf="user.imageUrl" mat-card-image class="user-image" src="../assets/img/person-square.svg">
+        <img *ngIf="!user.base64Image" mat-card-image class="user-image" src="../assets/img/person-square.svg">
+        <img *ngIf="user.base64Image" mat-card-image class="user-image" [src]="sanitizer.bypassSecurityTrustUrl(user.base64Image)">
         <mat-card-content>
             <i class="bi bi-person-fill"></i> {{user.firstName}} {{user.lastName}}<br>
             <i class="bi bi-geo-alt-fill"></i> {{user.address}}<br>
