@@ -1,0 +1,36 @@
+version: "3"
+services: 
+    proxy:
+        build: 
+            context: ./nginx
+            dockerfile: Dockerfile
+        ports: 
+            - "80:80"
+        restart: always
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        ports: 
+            - "9000:80"
+    backend_mysql:
+        image: "mysql:8.0"
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: "itss-web-registration"
+            MYSQL_ROOT_PASSWORD: "%TS9-UJpAEU%+XPn"
+        volumes:
+            - /d/data:/docker-entrypoint-initdb.d
+        restart: always
+    backend:
+        build: 
+            context: ./backend
+            dockerfile: Dockerfile
+        ports: 
+            - "5000:80"
+        depends_on:
+            - backend_mysql
+        environment: 
+            ConnectionStrings__MySQL_Database: "server=backend_mysql;database=itss-web-registration;user=root;password=%TS9-UJpAEU%+XPn;"
+
