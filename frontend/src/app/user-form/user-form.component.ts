@@ -18,12 +18,9 @@ export class UserFormComponent {
 
   webcamImage!: WebcamImage;
   user!: User;
-  roles: string[];
   webcamMode: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService){
-    this.roles = ['Administrator', 'Visitor']
-  }
+  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService){}
 
   handleImage(webcamImage: WebcamImage) {
     this.getPicture.emit(webcamImage);
@@ -44,14 +41,12 @@ export class UserFormComponent {
       if(user) {
         this.userService.putUser(this.user).subscribe(user => {
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
-            // todo
           });
         });
       }
       else {
         this.userService.postUser(this.user).subscribe(user => {
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
-            // todo
           });
         });
       }

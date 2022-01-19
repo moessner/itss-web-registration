@@ -26,31 +26,6 @@
           <input #address matInput placeholder="Address" [value]="user.address" (change)='user.address=address.value' required>
         </mat-form-field>
       </p>
-      <p>
-        <mat-form-field appearance="fill">
-          <mat-label>Role</mat-label>
-          <mat-select #roleSelect [value]="user.role" (selectionChange)='user.role=roleSelect.value'>
-            <mat-option #role *ngFor="let role of roles" [value]="role">
-              {{role}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </p>
-      <p *ngIf="roleSelect.value=='Administrator'">
-        <mat-form-field appearance="fill">
-          <input #username matInput placeholder="Username" required>
-        </mat-form-field>
-      </p>
-      <p *ngIf="roleSelect.value=='Administrator'">
-        <mat-form-field appearance="fill">
-          <input #password matInput type="password" placeholder="Password" required>
-        </mat-form-field>
-      </p>
-      <p *ngIf="roleSelect.value=='Administrator'">
-        <mat-form-field appearance="fill">
-          <input #passwordRepeat matInput type="password" placeholder="Repeat password" required>
-        </mat-form-field>
-      </p>
       <button mat-button class="margin-left-5 clickable" (click)="createOrUpdateUser()"><i class="bi bi-check"></i> Confirm</button>
       <button mat-button class="margin-left-5 clickable" (click)="webcamMode=true"><i class="bi bi-camera-fill"></i> Webcam</button>
       <button mat-button class="margin-left-5 clickable" (click)="abort()"><i class="bi bi-x"></i> Abort</button>
