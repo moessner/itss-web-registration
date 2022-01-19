@@ -34,7 +34,6 @@ namespace backend
             services.AddDbContext<DatabaseContext>(options => options.UseMySql(
                 Configuration.GetConnectionString("MySQL_Database"),
                 new MySqlServerVersion(new Version(8, 0, 21)))
-                .EnableSensitiveDataLogging()
                 .EnableDetailedErrors()
             );
 
@@ -50,6 +49,7 @@ namespace backend
                 });
             });
 
+            services.AddCors();
             services.AddScoped<IUserProvider, UserProvider>();
         }
 
@@ -68,6 +68,9 @@ namespace backend
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                     options.RoutePrefix = string.Empty;
                 });
+
+                // todo: change allowed origin for production
+                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             }
 
             app.UseHttpsRedirection();

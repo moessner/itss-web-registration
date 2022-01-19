@@ -2,37 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Persistence;
 
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220114215843_Add_user_role_and_address")]
+    partial class Add_user_role_and_address
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.13");
-
-            modelBuilder.Entity("backend.Models.Image", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Base64String")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
 
             modelBuilder.Entity("backend.Models.User", b =>
                 {
@@ -46,8 +31,8 @@ namespace backend.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid?>("ImageId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("LastName")
                         .HasColumnType("longtext");
@@ -57,18 +42,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("backend.Models.User", b =>
-                {
-                    b.HasOne("backend.Models.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
-
-                    b.Navigation("Image");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,8 @@ import { FormControl, Validators } from "@angular/forms";
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { WebcamImage, WebcamInitError } from "ngx-webcam";
 import { Observable, Subject } from 'rxjs';
+import { User } from "../api/models/user";
+import { UserService } from "../api/user-service";
 
 @Component({
   selector: 'app-user-form',
@@ -14,12 +16,12 @@ export class UserFormComponent {
   @Output() getPicture = new EventEmitter<WebcamImage>();
   private webcamTrigger: Subject<void> = new Subject<void>();
 
-  webcamImage: WebcamImage | undefined;
-  user: any;
+  webcamImage!: WebcamImage;
+  user!: User;
   roles: string[];
   webcamMode: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<UserFormComponent>){
+  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService){
     this.roles = ['Administrator', 'Visitor']
   }
 
@@ -34,7 +36,43 @@ export class UserFormComponent {
   }
 
   createOrUpdateUser(): void {
-    console.log("create user");
+    
+    this.userService.getUsers().subscribe(users => {
+
+      const user = users.find(x => x.id == this.user.id);
+
+      if(user) {
+        this.userService.putUser(this.user).subscribe(user => {
+          this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
+            // todo
+          });
+        });
+      }
+      else {
+        this.userService.postUser(this.user).subscribe(user => {
+          this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
+            // todo
+          });
+        });
+      }
+    })
+
+
+    this.dialogRef.close();
+  }
+
+  convertWebcamImageToFile(webcamImage: WebcamImage): File {
+    
+    const arr = this.webcamImage.imageAsDataUrl.split(",");
+
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    const file: File = new File([u8arr], 'image', { type: 'png' })
+    return file;
   }
 
   abort(): void {
@@ -46,6 +84,10 @@ export class UserFormComponent {
   webcamInitFailure(error: WebcamInitError): void {
     alert("Camera module: " + error.message);
     this.webcamMode = false;
+  }
+
+  ngOnDestroy(): void {
+    this.webcamTrigger.complete();
   }
 
   get webcamTriggerObservable(): Observable<void> {

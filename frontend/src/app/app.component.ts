@@ -1,7 +1,10 @@
 import { UserFormComponent } from './user-form/user-form.component';
 import { Component } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import { User } from './models/user';
+import { User } from './api/models/user';
+import { UserService } from './api/user-service';
+import { environment } from 'src/environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -11,44 +14,60 @@ import { User } from './models/user';
 })
 export class AppComponent {
 
- constructor(public dialog: MatDialog){}
+  users: User[] = [];
+  visible_users: User[] = [];
+  imageToShow: any;
 
-  users = [
-    new User('1', 'Fabian', 'Mößner', 'Administrator', 'Blumenstraße 69, 70435 Stuttgart, Germany', 'no image', true),
-    new User('2', 'Fabian', 'Mößner', 'Administrator', 'Blumenstraße 69, 70435 Stuttgart, Germany', 'no image', true),
-    new User('3', 'Fabian', 'Mößner', 'Administrator', 'Blumenstraße 69, 70435 Stuttgart, Germany', 'no image', true),
-    new User('4', 'Fabian', 'Mößner', 'Administrator', 'Blumenstraße 69, 70435 Stuttgart, Germany', 'no image', true),
-  ]
+ constructor(public dialog: MatDialog, private userService: UserService, 
+  private readonly sanitizer: DomSanitizer){ }
 
-  visible_users = this.users;
-
-  ngOnInit(): void {
-    this.visible_users = this.users;
+  ngOnInit() {
+    this.updateUsers();
   }
 
-  search(query: string): void{
+  search(query: string) {
       this.visible_users = this.users.filter((x) =>
         x.firstName.toLowerCase().includes(query.toLowerCase()) ||
         x.lastName.toLowerCase().includes(query.toLowerCase())
         )
   }
 
-  createUser() {
+  openCreateUserDialog() {
     const dialogRef = this.dialog.open(UserFormComponent);
     dialogRef.componentInstance.user = new User('', '', '', '', '', '', true);
-    // todo: create user
+    dialogRef.afterClosed().subscribe(() => {
+      this.updateUsers();
+    })
   }
 
-  editUser(user: User): void {
+  openEditUserDialog(user: User) {
     const dialogRef = this.dialog.open(UserFormComponent);
     dialogRef.componentInstance.user = user;
-    // todo: edit user
+    dialogRef.afterClosed().subscribe(() => {
+      this.updateUsers();
+    })
   }
 
-  deleteUser(user: User): void {
+  deleteUser(user: User) {
     if(confirm(`Are you sure want to delete user '${user.firstName} ${user.lastName}'?`)) {
-      // todo: delete user
+      this.userService.deleteUser(user.id).subscribe(r => {
+        this.updateUsers();
+      })
     }
+  }
+
+  updateUsers() {
+    this.userService.getUsers().subscribe(r => {
+      this.users = r;
+
+      this.users.forEach(user => {
+        this.userService.getBase64Image(user).subscribe(r => {
+          console.log(r);
+        });
+      })
+
+      this.visible_users = this.users;
+    });
   }
 
 }

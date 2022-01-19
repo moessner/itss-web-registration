@@ -33,3 +33,4 @@ typings
 .DS_Store
 Thumbs.db
 *.bak
+/frontend/.angular
