@@ -1,6 +1,7 @@
 ﻿using backend.Models;
 using backend.Persistence;
 using backend.Providers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,9 +17,11 @@ namespace backend.Controllers
     public class UserController : ApiController
     {
         private readonly IUserProvider _userProvider;
-        public UserController(IUserProvider userProvider)
+        private readonly IWebHostEnvironment _env;
+        public UserController(IUserProvider userProvider, IWebHostEnvironment env)
         {
             _userProvider = userProvider;
+            _env = env;
         }
 
         [HttpPost("")]
@@ -55,7 +58,7 @@ namespace backend.Controllers
 
                 if (image != null && image.Length > 0)
                 {
-                    string imagePath = Path.Combine(".\\Images", Guid.NewGuid().ToString() + extension);
+                    string imagePath = Path.Combine(_env.ContentRootPath, $"{Guid.NewGuid()}.{extension}");
 
                     User dbUser = await _userProvider.GetUserAsync(userId);
 
