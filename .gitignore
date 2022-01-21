@@ -34,3 +34,4 @@ typings
 Thumbs.db
 *.bak
 /frontend/.angular
+/backend/backend/Images/*
