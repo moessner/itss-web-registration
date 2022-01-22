@@ -7,12 +7,16 @@ services:
         ports: 
             - "80:80"
         restart: always
+        depends_on:
+            - backend
     frontend:
         build:
             context: ./frontend
             dockerfile: Dockerfile
         ports: 
             - "9000:80"
+        depends_on:
+            - proxy
     backend_mysql:
         image: "mysql:8.0"
         ports:
@@ -32,5 +36,5 @@ services:
         depends_on:
             - backend_mysql
         environment: 
-            ConnectionStrings__MySQL_Database: "server=backend_mysql;database=itss-web-registration;user=root;password=%TS9-UJpAEU%+XPn;"
+            ConnectionStrings__MySQL_Database: server=backend_mysql,3306;database=itss-web-registration;user=root;password=%TS9-UJpAEU%+XPn;
 
