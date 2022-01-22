@@ -5,7 +5,7 @@ export class User {
     lastName: string;
     address: string;
     base64Image: string;
-    isCollapsed: boolean = true;
+    isCollapsed: boolean;
 
     constructor(id: string, firstName: string, lastName: string, 
         address: string, imageUrl: string, isCollapsed: boolean){

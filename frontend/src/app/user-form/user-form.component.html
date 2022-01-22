@@ -8,7 +8,9 @@
 
 <div *ngIf="!webcamMode">                
     <div class="user-image">
-      <img [src]="webcamImage? webcamImage.imageAsDataUrl : '../../assets/img/person-square.svg'" (click)="webcamMode=true" class="clickable"/>
+      <img *ngIf="!user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image src="../assets/img/person-square.svg">
+      <img *ngIf="user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image [src]="sanitizer.bypassSecurityTrustUrl(user.base64Image)">
+      <img *ngIf="webcamImage" [src]="webcamImage.imageAsDataUrl" (click)="webcamMode=true" class="clickable"/>
     </div>
     <div class="user-content">
       <p>

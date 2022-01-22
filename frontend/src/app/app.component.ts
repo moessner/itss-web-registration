@@ -60,7 +60,7 @@ export class AppComponent {
 
     this.userService.getUsers().subscribe(r => {
       this.users = r;
-      this.visible_users = this.users;
+      this.visible_users = r;
     });
   }
 

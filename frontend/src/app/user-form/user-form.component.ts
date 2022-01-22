@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer } from "@angular/platform-browser";
 import { WebcamImage, WebcamInitError } from "ngx-webcam";
 import { Observable, Subject } from 'rxjs';
 import { User } from "../api/models/user";
@@ -20,7 +21,8 @@ export class UserFormComponent {
   user!: User;
   webcamMode: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService){}
+  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService, 
+    public readonly sanitizer: DomSanitizer){}
 
   handleImage(webcamImage: WebcamImage) {
     this.getPicture.emit(webcamImage);
@@ -41,25 +43,26 @@ export class UserFormComponent {
       if(user) {
         this.userService.putUser(this.user).subscribe(user => {
           if(!this.webcamImage){
+            this.dialogRef.close();
             return;
           }
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
+            this.dialogRef.close();
           });
         });
       }
       else {
         this.userService.postUser(this.user).subscribe(user => {
           if(!this.webcamImage){
+            this.dialogRef.close();
             return;
           }
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
+            this.dialogRef.close();
           });
         });
       }
     })
-
-
-    this.dialogRef.close();
   }
 
   convertWebcamImageToFile(webcamImage: WebcamImage): File {
