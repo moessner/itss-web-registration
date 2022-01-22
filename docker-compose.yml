@@ -31,7 +31,6 @@ services:
         build: 
             context: ./backend
             dockerfile: Dockerfile
-        command: while ! curl -o -backend_mysql:3306; do sleep 1; done
         ports: 
             - "5000:80"
         depends_on:

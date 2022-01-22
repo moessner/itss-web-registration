@@ -64,6 +64,9 @@ namespace backend
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, DatabaseContext dbContext, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            while (!dbContext.Database.CanConnect())
+                logger.LogInformation("Wait until database is up...");
+
             dbContext?.Database.Migrate();
 
             if (env.IsDevelopment())
