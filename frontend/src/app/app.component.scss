@@ -4,6 +4,12 @@
 
   .toolbar {
     background-color: #c2185b;
+    width: auto;
+    height: auto;
+  }
+
+  .toolbar-element {
+    margin: 1%;
   }
 
   .spacer {
@@ -16,7 +22,7 @@
     flex-wrap: wrap;
   }
 
-  .user-card {
+  .mat-card {
     text-align: justify;
     border: black 1px groove;
     vertical-align: top;
@@ -26,26 +32,18 @@
     display: inline-block;
   }
   
-  .user-image {
-    width: 100%;
+  .mat-card-header {
     margin: 5%;
   }
 
-  .card-content {
-    margin-top: 10%;
-    margin-right: 10%;
-  }
-
-  .card-header:hover {
-    transform:scale(1.01,1.01);
-    -webkit-transform:scale(1.01,1.01);
-    -moz-transform:scale(1.01,1.01);
+  .mat-card-content {
+    padding: 5%;
   }
 
   .margin-left-5 {
-    margin-left: 5px;
+    margin-left: 5%;
   }
 
   .margin-right-10 {
-    margin-right: 10px;
+    margin-right: 10%;
   }

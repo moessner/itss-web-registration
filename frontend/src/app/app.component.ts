@@ -57,6 +57,7 @@ export class AppComponent {
   }
 
   updateUsers() {
+
     this.userService.getUsers().subscribe(r => {
       this.users = r;
       this.visible_users = this.users;
