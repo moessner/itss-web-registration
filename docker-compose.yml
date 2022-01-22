@@ -31,10 +31,11 @@ services:
         build: 
             context: ./backend
             dockerfile: Dockerfile
+        command: while ! curl -o -backend_mysql:3306; do sleep 1; done
         ports: 
             - "5000:80"
         depends_on:
             - backend_mysql
         environment: 
-            ConnectionStrings__MySQL_Database: server=backend_mysql,3306;database=itss-web-registration;user=root;password=%TS9-UJpAEU%+XPn;
+            ConnectionStrings__MySQL_Database: "server=backend_mysql,3306;database=itss-web-registration;user=root;password=%TS9-UJpAEU%+XPn;"
 
