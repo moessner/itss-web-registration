@@ -8,7 +8,7 @@
 
 <div *ngIf="!webcamMode">
     <div class="user-image">
-      <img *ngIf="!user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image src="../assets/img/person-square.svg">
+      <img *ngIf="!user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image src="./assets/img/person-square.svg">
       <img *ngIf="user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image [src]="sanitizer.bypassSecurityTrustUrl(user.base64Image)">
       <img *ngIf="webcamImage" [src]="webcamImage.imageAsDataUrl" (click)="webcamMode=true" class="clickable"/>
     </div>
@@ -46,7 +46,7 @@
       </p>
       <p>
         <mat-form-field appearance="fill">
-          <input #authorizationcode matInput placeholder="Authorization Code" [value]="user.authorizationCode" (change)='user.authorizationCode=lastName.value' required>
+          <input #authorizationcode matInput placeholder="Authorization Code" [value]="user.authorizationCode" (change)='user.authorizationCode=authorizationcode.value' required>
         </mat-form-field>
       </p>
       <button mat-button class="margin-left-5 clickable" (click)="abort()"><i class="bi bi-x"></i> Abort</button>
