@@ -1,15 +1,16 @@
 <div class="content">
 
-  <img [src]="imageToShow">
 
+  <img [src]="imageToShow">
     <mat-toolbar class="toolbar wrapPanel">
       <span class="toolbar-element">ITSS User Registration</span>
       <span class="spacer toolbar-element"></span>
-      <input class="toolbar-element" #q type="text" placeholder="Search" (input)="search(q.value)">
+      <!--<input class="toolbar-element" #q type="text" placeholder="Search" (input)="search(q.value)">!-->
       <button mat-button class="menu-button clickable toolbar-element" (click)="openCreateUserDialog()"><i class="bi bi-person-plus-fill"></i> Register new user</button>
     </mat-toolbar>
 
   <div class="wrapPanel">
+    <!--
     <mat-card *ngFor="let user of visible_users">
       <mat-card-header class="clickable" (click)="user.isCollapsed=!user.isCollapsed">
         <img *ngIf="!user.base64Image" mat-card-avatar src="../assets/img/person-square.svg">
@@ -27,5 +28,6 @@
         <button mat-button class="clickable" (click)="openEditUserDialog(user)"><i class="bi bi-pencil-fill"></i> Edit</button>
       </div>
     </mat-card>
+    !-->
   </div>
 </div>
