@@ -16,12 +16,13 @@ export class UserFormComponent {
 
   @Output() getPicture = new EventEmitter<WebcamImage>();
   private webcamTrigger: Subject<void> = new Subject<void>();
+  public errorMessage: string = '';
 
   webcamImage!: WebcamImage;
   user!: User;
   webcamMode: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService, 
+  constructor(public dialogRef: MatDialogRef<UserFormComponent>, private userService: UserService,
     public readonly sanitizer: DomSanitizer){}
 
   handleImage(webcamImage: WebcamImage) {
@@ -35,7 +36,7 @@ export class UserFormComponent {
   }
 
   createOrUpdateUser(): void {
-    
+
     this.userService.getUsers().subscribe(users => {
 
       const user = users.find(x => x.id == this.user.id);
@@ -60,7 +61,15 @@ export class UserFormComponent {
           this.userService.postImage(user, this.convertWebcamImageToFile(this.webcamImage)).subscribe(r => {
             this.dialogRef.close();
           });
-        });
+        },
+          error => {
+          this.errorMessage = error.error;
+          console.log(error);
+          var that = this;
+          setTimeout(function() {
+            that.errorMessage = '';
+          }, 6000);
+          });
       }
     })
   }

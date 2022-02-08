@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<div *ngIf="!webcamMode">                
+<div *ngIf="!webcamMode">
     <div class="user-image">
       <img *ngIf="!user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image src="../assets/img/person-square.svg">
       <img *ngIf="user.base64Image && !webcamImage" (click)="webcamMode=true" class="clickable" mat-card-image [src]="sanitizer.bypassSecurityTrustUrl(user.base64Image)">
@@ -28,8 +28,33 @@
           <input #address matInput placeholder="Address" [value]="user.address" (change)='user.address=address.value' required>
         </mat-form-field>
       </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Group</mat-label>
+        <mat-select [(value)]="user.group" required>
+          <mat-option value="Customer">
+            Customer
+          </mat-option>
+          <mat-option value="Premium Customer">
+            Premium Customer
+          </mat-option>
+          <mat-option value="Interested">
+            Interested
+          </mat-option>
+        </mat-select>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="fill">
+          <input #authorizationcode matInput placeholder="Authorization Code" [value]="user.authorizationCode" (change)='user.authorizationCode=lastName.value' required>
+        </mat-form-field>
+      </p>
       <button mat-button class="margin-left-5 clickable" (click)="abort()"><i class="bi bi-x"></i> Abort</button>
       <button mat-button class="margin-left-5 clickable" (click)="webcamMode=true"><i class="bi bi-camera-fill"></i> Webcam</button>
       <button mat-button class="margin-left-5 clickable" (click)="createOrUpdateUser()"><i class="bi bi-check"></i> Confirm</button>
+      <div *ngIf="errorMessage" class="errorbanner">
+        {{errorMessage}}
+      </div>
+
     </div>
 </div>

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Providers.GroupProvider;
 
 namespace backend.Controllers
 {
@@ -18,23 +19,33 @@ namespace backend.Controllers
     {
         private readonly IUserProvider _userProvider;
         private readonly IWebHostEnvironment _env;
-        public UserController(IUserProvider userProvider, IWebHostEnvironment env)
+        private readonly IGroupProvider _groupProvider;
+        public UserController(IUserProvider userProvider, IGroupProvider groupProvider, IWebHostEnvironment env)
         {
             _userProvider = userProvider;
+            _groupProvider = groupProvider;
             _env = env;
         }
 
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserOut))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] UserIn userIn)
+        public async Task<IActionResult> Create([FromBody] UserGroupIn userIn)
         {
+            var group = await _groupProvider.GetGroupAsync(userIn.GroupName, userIn.AuthorizationCode);
+            if (group == null)
+            {
+                return BadRequest("Incorrect Group and Authorization Code Combination");
+            }
+            
             User user = new User
             {
                 Id = Guid.NewGuid(),
                 FirstName = userIn.FirstName,
                 LastName = userIn.LastName,
                 Address = userIn.Address,
+                Group = group,
+                
             };
 
             User dbUser = await _userProvider.CreateUserAsync(user);

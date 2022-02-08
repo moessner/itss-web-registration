@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Persistence;
 
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220208085108_groups")]
+    partial class groups
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,40 +25,15 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("AuthorizationCode")
-                        .IsRequired()
+                    b.Property<string>("AuthorisierungsCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("GroupId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Group");
-
-                    b.HasData(
-                        new
-                        {
-                            GroupId = 1,
-                            AuthorizationCode = "258A52FS",
-                            Name = "Customer"
-                        },
-                        new
-                        {
-                            GroupId = 2,
-                            AuthorizationCode = "10AL29S5",
-                            Name = "Premium Customer"
-                        },
-                        new
-                        {
-                            GroupId = 3,
-                            AuthorizationCode = "4829ASK1",
-                            Name = "Interested"
-                        });
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>

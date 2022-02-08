@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Providers.GroupProvider;
 
 namespace backend
 {
@@ -59,6 +60,7 @@ namespace backend
 
             services.AddCors();
             services.AddScoped<IUserProvider, UserProvider>();
+            services.AddScoped<IGroupProvider, GroupProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

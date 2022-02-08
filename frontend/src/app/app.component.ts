@@ -17,8 +17,8 @@ export class AppComponent {
   users: User[] = [];
   visible_users: User[] = [];
   imageToShow: any;
-
- constructor(public dialog: MatDialog, private userService: UserService, 
+  public errorMessage = '';
+ constructor(public dialog: MatDialog, private userService: UserService,
   public readonly sanitizer: DomSanitizer){ }
 
   ngOnInit() {
@@ -34,7 +34,7 @@ export class AppComponent {
 
   openCreateUserDialog() {
     const dialogRef = this.dialog.open(UserFormComponent);
-    dialogRef.componentInstance.user = new User('', '', '', '', '', true);
+    dialogRef.componentInstance.user = new User('', '', '', '', '', true, '', '');
     dialogRef.afterClosed().subscribe(() => {
       this.updateUsers();
     })

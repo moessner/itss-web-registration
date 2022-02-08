@@ -13,5 +13,20 @@ namespace backend.Models
         public string Address { get; set; }
         public string Base64Image { get; set; }
         public string ImagePath { get; set; }
+        
+        public int GroupId { get; set; }
+        
+        public Group Group { get; set; }
+    }
+
+    public class Group
+    {
+        public int GroupId { get; set; }
+        
+        public List<User> Users { get; set; }
+
+        public string Name { get; set; }
+
+        public string AuthorizationCode { get; set; }
     }
 }

@@ -30,8 +30,9 @@
     margin-top: 2%;
     margin-right: 2%;
     display: inline-block;
+    z-index: 5;
   }
-  
+
   .mat-card-header {
     margin: 5%;
   }
@@ -47,3 +48,4 @@
   .margin-right-10 {
     margin-right: 10%;
   }
+
