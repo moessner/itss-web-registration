@@ -18,6 +18,7 @@ export class AppComponent {
   visible_users: User[] = [];
   imageToShow: any;
   public errorMessage = '';
+  adminMode: boolean = false;
  constructor(public dialog: MatDialog, private userService: UserService,
   public readonly sanitizer: DomSanitizer){ }
 
@@ -64,4 +65,7 @@ export class AppComponent {
     });
   }
 
+  toggleAdminMode() {
+    this.adminMode = !this.adminMode;
+  }
 }
