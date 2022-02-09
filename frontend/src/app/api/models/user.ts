@@ -4,7 +4,7 @@ export class User {
     firstName: string;
     lastName: string;
     address: string;
-    group: string;
+    groupName: string;
     authorizationCode: string;
     base64Image: string;
     isCollapsed: boolean;
@@ -18,7 +18,7 @@ export class User {
             this.address = address;
             this.base64Image = imageUrl;
             this.isCollapsed = isCollapsed;
-            this.group = group;
+            this.groupName = group;
             this.authorizationCode = authorizationCode;
         }
 }
