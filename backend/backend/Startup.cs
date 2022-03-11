@@ -40,9 +40,10 @@ namespace backend
                     .SetMinimumLevel(LogLevel.Information)
             );
 
+            var e = Configuration.GetConnectionString("MySQL_Database");
             services.AddDbContext<DatabaseContext>(options => options.UseMySql(
                 Configuration.GetConnectionString("MySQL_Database"),
-                new MySqlServerVersion(new Version(8, 0, 0)))
+                new MySqlServerVersion(new Version(8, 1, 2)))
                 .EnableDetailedErrors()
             );
 
@@ -66,11 +67,11 @@ namespace backend
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, DatabaseContext dbContext, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-            while (!dbContext.Database.CanConnect())
-                logger.LogInformation("Wait until database is up...");
-
             dbContext?.Database.Migrate();
 
+            while (dbContext == null || !dbContext.Database.CanConnect())
+                logger.LogInformation("Wait until database is up...");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
